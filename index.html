@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Flag Mosaic – لعبة الأعلام</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- SPLASH / LOGIN SCREEN -->
+<div id="screen-splash" class="screen active">
+  <div class="splash-bg"></div>
+  <div class="splash-content">
+    <div class="logo-area">
+      <div class="logo-icon">🌍</div>
+      <h1 class="logo-title" data-i18n="appTitle">Flag Mosaic</h1>
+      <p class="logo-sub" data-i18n="appSub">العب • اكتشف • اجمع</p>
+    </div>
+    <div class="splash-flags-row" id="splashFlags"></div>
+    <div class="auth-card">
+      <button class="btn btn-pi" id="btnConnectPi">
+        <span class="pi-logo">π</span>
+        <span data-i18n="connectPi">Connect with Pi</span>
+      </button>
+      <button class="btn btn-ghost" id="btnGuest" data-i18n="playGuest">العب كضيف</button>
+    </div>
+    <p class="splash-version">v1.0 • Pi Network Mock</p>
+  </div>
+</div>
+
+<!-- HOME SCREEN -->
+<div id="screen-home" class="screen">
+  <div class="top-header">
+    <div class="header-user">
+      <span class="avatar">🎮</span>
+      <div class="user-info">
+        <span id="headerUsername" class="hdr-name">Guest</span>
+        <span id="headerPiId" class="hdr-pid">Pi ID: —</span>
+      </div>
+    </div>
+    <div class="header-balance">
+      <span class="pi-sym">π</span>
+      <span id="headerBalance">500</span>
+    </div>
+  </div>
+  <div class="home-body">
+    <div class="daily-banner" id="dailyBanner" style="display:none">
+      <div class="daily-inner">
+        <span>🎁</span>
+        <div>
+          <b data-i18n="dailyReward">مكافأة اليوم</b>
+          <small>+20 π + علم جديد!</small>
+        </div>
+        <button class="btn-claim" id="btnClaimDaily" data-i18n="claim">استلم</button>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <span id="homeLevel">1</span>
+        <label data-i18n="level">المستوى</label>
+      </div>
+      <div class="stat-box">
+        <span id="homeStars">0 ⭐</span>
+        <label data-i18n="stars">النجوم</label>
+      </div>
+      <div class="stat-box">
+        <span id="homeFlags">0 🚩</span>
+        <label data-i18n="flags">الأعلام</label>
+      </div>
+    </div>
+    <button class="btn btn-play" id="btnPlayHome" data-i18n="play">▶ العب الآن</button>
+    <div class="mode-selector">
+      <button class="mode-btn active" data-mode="classic" data-i18n="modeClassic">كلاسيك</button>
+      <button class="mode-btn" data-mode="timed" data-i18n="modeTimed">محدود الوقت</button>
+      <button class="mode-btn" data-mode="challenge" data-i18n="modeChallenge">تحدي</button>
+    </div>
+    <div class="level-grid" id="levelGrid"></div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="screen-game" class="screen">
+  <div class="game-topbar">
+    <button class="icon-btn" id="btnPause">⏸</button>
+    <div class="game-stats">
+      <span id="gameLevelLabel">L1</span>
+      <span id="gameScore">0</span>
+      <span id="gameTimer">0:00</span>
+      <span id="gameTilesLeft">0</span>
+    </div>
+    <button class="icon-btn" id="btnHome">🏠</button>
+  </div>
+  <div class="board-wrapper" id="boardWrapper">
+    <div class="board" id="gameBoard"></div>
+  </div>
+  <div class="game-bottombar">
+    <button class="ctrl-btn" id="btnShuffle">
+      <span>🔀</span><small data-i18n="shuffle">خلط</small>
+      <span class="cost-badge">10π</span>
+    </button>
+    <button class="ctrl-btn" id="btnHint">
+      <span>💡</span><small data-i18n="hint">تلميح</small>
+      <span class="cost-badge">5π</span>
+    </button>
+    <button class="ctrl-btn" id="btnUndo">
+      <span>↩</span><small data-i18n="undo">تراجع</small>
+      <span class="cost-badge">3π</span>
+    </button>
+  </div>
+</div>
+
+<!-- PROFILE SCREEN -->
+<div id="screen-profile" class="screen">
+  <div class="screen-header">
+    <h2 data-i18n="profile">الملف الشخصي</h2>
+  </div>
+  <div class="profile-body">
+    <div class="profile-hero">
+      <div class="big-avatar">🌍</div>
+      <div>
+        <div class="prof-name" id="profUsername">Guest</div>
+        <div class="prof-id" id="profPiId">—</div>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar" id="xpBar" style="width:20%"></div>
+        </div>
+        <small id="xpLabel">Lv 1 • 0 XP</small>
+      </div>
+    </div>
+    <div class="profile-stats-grid">
+      <div class="ps-box"><span id="psGames">0</span><label data-i18n="gamesPlayed">مباريات</label></div>
+      <div class="ps-box"><span id="psMatches">0</span><label data-i18n="matches">تطابقات</label></div>
+      <div class="ps-box"><span id="psStars">0</span><label data-i18n="stars">نجوم</label></div>
+      <div class="ps-box"><span id="psFlags">0</span><label data-i18n="flagsColl">أعلام</label></div>
+    </div>
+    <h3 data-i18n="achievements">الإنجازات</h3>
+    <div class="achievements-grid" id="achievementsGrid"></div>
+    <h3 data-i18n="flagCollection">مجموعة الأعلام</h3>
+    <div class="flag-collection" id="flagCollection"></div>
+  </div>
+</div>
+
+<!-- WALLET SCREEN -->
+<div id="screen-wallet" class="screen">
+  <div class="screen-header">
+    <h2 data-i18n="wallet">المحفظة</h2>
+  </div>
+  <div class="wallet-body">
+    <div class="balance-card">
+      <div class="bc-label" data-i18n="balance">رصيدك</div>
+      <div class="bc-amount"><span class="pi-big">π</span><span id="walletBalance">500</span></div>
+      <div class="bc-sub" data-i18n="mockPi">محاكاة Pi Network</div>
+    </div>
+    <div class="shop-section">
+      <h3 data-i18n="shop">المتجر</h3>
+      <div class="shop-grid">
+        <div class="shop-item" data-item="hint">
+          <span>💡</span><b data-i18n="hint">تلميح</b><small>5π</small>
+          <button class="btn-buy" data-cost="5" data-item="hint" data-i18n="buy">شراء</button>
+        </div>
+        <div class="shop-item" data-item="shuffle">
+          <span>🔀</span><b data-i18n="shuffle">خلط</b><small>10π</small>
+          <button class="btn-buy" data-cost="10" data-item="shuffle" data-i18n="buy">شراء</button>
+        </div>
+        <div class="shop-item" data-item="undo">
+          <span>↩</span><b data-i18n="undo">تراجع</b><small>3π</small>
+          <button class="btn-buy" data-cost="3" data-item="undo" data-i18n="buy">شراء</button>
+        </div>
+        <div class="shop-item" data-item="theme_neon">
+          <span>🌈</span><b>Neon</b><small>50π</small>
+          <button class="btn-buy" data-cost="50" data-item="theme_neon" data-i18n="buy">شراء</button>
+        </div>
+      </div>
+    </div>
+    <h3 data-i18n="transactions">سجل المعاملات</h3>
+    <div class="tx-list" id="txList"></div>
+  </div>
+</div>
+
+<!-- SETTINGS SCREEN -->
+<div id="screen-settings" class="screen">
+  <div class="screen-header">
+    <h2 data-i18n="settings">الإعدادات</h2>
+  </div>
+  <div class="settings-body">
+    <div class="setting-group">
+      <h3 data-i18n="audio">الصوت</h3>
+      <div class="setting-row">
+        <label data-i18n="music">موسيقى</label>
+        <label class="toggle"><input type="checkbox" id="togMusic" checked><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <label data-i18n="sfx">مؤثرات</label>
+        <label class="toggle"><input type="checkbox" id="togSfx" checked><span class="slider"></span></label>
+      </div>
+    </div>
+    <div class="setting-group">
+      <h3 data-i18n="appearance">المظهر</h3>
+      <div class="setting-row">
+        <label data-i18n="darkMode">الوضع الليلي</label>
+        <label class="toggle"><input type="checkbox" id="togDark" checked><span class="slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <label data-i18n="largeText">نص كبير</label>
+        <label class="toggle"><input type="checkbox" id="togLarge"><span class="slider"></span></label>
+      </div>
+    </div>
+    <div class="setting-group">
+      <h3 data-i18n="language">اللغة</h3>
+      <div class="lang-buttons">
+        <button class="lang-btn" data-lang="ar">🇸🇦 العربية</button>
+        <button class="lang-btn" data-lang="en">🇬🇧 English</button>
+        <button class="lang-btn" data-lang="fr">🇫🇷 Français</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <h3 data-i18n="account">الحساب</h3>
+      <button class="btn btn-danger" id="btnLogout" data-i18n="logout">تسجيل الخروج</button>
+      <button class="btn btn-warning" id="btnReset" data-i18n="resetProgress">إعادة التعيين</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD SCREEN -->
+<div id="screen-leaderboard" class="screen">
+  <div class="screen-header">
+    <h2 data-i18n="leaderboard">المتصدرون</h2>
+  </div>
+  <div class="lb-body" id="lbBody"></div>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-btn active" data-screen="home">🏠<span data-i18n="home">الرئيسية</span></button>
+  <button class="nav-btn" data-screen="game">🎮<span data-i18n="play">العب</span></button>
+  <button class="nav-btn" data-screen="profile">👤<span data-i18n="profile">الملف</span></button>
+  <button class="nav-btn" data-screen="wallet">💰<span data-i18n="wallet">المحفظة</span></button>
+  <button class="nav-btn" data-screen="settings">⚙️<span data-i18n="settings">الإعدادات</span></button>
+</nav>
+
+<!-- WIN MODAL -->
+<div class="modal-overlay" id="winModal" style="display:none">
+  <div class="modal win-modal">
+    <div class="win-icon">🏆</div>
+    <h2 data-i18n="youWin">فزت!</h2>
+    <div class="stars-display" id="winStars"></div>
+    <div class="win-stats">
+      <div><span data-i18n="score">النتيجة</span>: <b id="wScore">0</b></div>
+      <div><span data-i18n="time">الوقت</span>: <b id="wTime">0:00</b></div>
+      <div><span data-i18n="earned">كسبت</span>: <b id="wPi">+0 π</b></div>
+    </div>
+    <div class="win-btns">
+      <button class="btn btn-pi" id="btnNextLevel" data-i18n="nextLevel">المستوى التالي</button>
+      <button class="btn btn-ghost" id="btnWinHome" data-i18n="home">الرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- DISCOVERY MODAL -->
+<div class="modal-overlay" id="discModal" style="display:none">
+  <div class="modal disc-modal">
+    <div class="disc-flag" id="discFlag">🏳</div>
+    <h2 data-i18n="newDiscovery">اكتشاف جديد!</h2>
+    <h3 id="discName">Unknown</h3>
+    <div class="disc-info">
+      <p>🗺 <span data-i18n="capital">العاصمة</span>: <b id="discCapital">—</b></p>
+      <p>🌍 <span data-i18n="continent">القارة</span>: <b id="discContinent">—</b></p>
+      <p class="disc-fact" id="discFact">—</p>
+    </div>
+    <button class="btn btn-pi" id="btnDiscClose" data-i18n="awesome">رائع!</button>
+  </div>
+</div>
+
+<!-- PAUSE MODAL -->
+<div class="modal-overlay" id="pauseModal" style="display:none">
+  <div class="modal pause-modal">
+    <h2 data-i18n="paused">متوقف</h2>
+    <button class="btn btn-pi" id="btnResume" data-i18n="resume">استأنف</button>
+    <button class="btn btn-ghost" id="btnPauseHome" data-i18n="home">الرئيسية</button>
+  </div>
+</div>
+
+<!-- DAILY REWARD MODAL -->
+<div class="modal-overlay" id="dailyModal" style="display:none">
+  <div class="modal daily-modal">
+    <div class="daily-icon">🎁</div>
+    <h2 data-i18n="dailyReward">مكافأة اليوم</h2>
+    <div class="daily-rewards">
+      <div class="dr-item">+20 π</div>
+      <div class="dr-item" id="dailyNewFlag">🏳 علم جديد</div>
+    </div>
+    <button class="btn btn-pi" id="btnDailyClose" data-i18n="claim">استلم</button>
+  </div>
+</div>
+
+<!-- PARTICLES CANVAS -->
+<canvas id="particleCanvas" style="position:fixed;top:0;left:0;pointer-events:none;z-index:9999"></canvas>
+
+<script src="script.js"></script>
+</body>
+</html>
